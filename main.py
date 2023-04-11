@@ -5,6 +5,7 @@ matches = {}
 relative_elo_values = {}
 elo_values = {}
 k = 40
+i = 0
 
 jsonFile = "db.json"
 
@@ -12,7 +13,7 @@ jsonFile = "db.json"
 with open(jsonFile, 'r') as file:
     elo_list = json.load(file)
 
-print(elo_list)
+#print(elo_list)
 
 #elo_list = [{"name": "A", "rating": 1309, "matches": 2}, {"name": "B", "rating": 1467, "matches": 4}, {"name": "C", "rating": 1345, "matches": 3}]
 
@@ -25,7 +26,7 @@ def elo_rating(player_a, player_b, k, d):
     b_win_probability = elo_probability(player_a["rating"], player_b["rating"])
     a_win_probability = elo_probability(player_b["rating"], player_a["rating"])
 
-    print(player_a["name"] + ": " + str(round(a_win_probability, 2)) + ", " + player_b["name"] + ": " + str(round(b_win_probability, 2)))
+    #print(player_a["name"] + ": " + str(round(a_win_probability, 2)) + ", " + player_b["name"] + ": " + str(round(b_win_probability, 2)))
 
     if d == "a_win":
         player_a_change = k * (1 - a_win_probability)
@@ -79,14 +80,46 @@ def sort_elo(lst):
         i += 1
 
 
-sort_elo(elo_list)
+def get_player():
+    i = 0
+    player = {}
+
+    while i == 0:
+        name = input("Please input a name: ")
+
+        for item in elo_list:
+            if item["name"].lower() == name.lower():
+                i = 1
+                player = item
+                print("Match found: " + player["name"] + ", Ranking: " + str(round(player["rating"], 2)))
+                break
+
+        if i == 0:
+            print("No match found, please try again.")
+
+    return player
+
+
+def compare():
+    player_a = get_player()
+    player_b = get_player()
+
+    player_a_win = elo_probability(player_b["rating"], player_a["rating"])
+
+    print("The chance of " + player_a["name"] + " winning against " + player_b["name"] + " is " + str(int(player_a_win*100)) + "%")
+
+
+#sort_elo(elo_list)
+
+while True:
+    compare()
 
 
 while True:
     player_a, player_b = get_next_match(elo_list)
 
     print("\nOption 1: " + player_a["name"] + "\nOption 2: " + player_b["name"])
-    response = input("Who is better? ")
+    response = input("Who is better? (Enter either '1' or '2') ")
     if response == "n":
         break
 
@@ -101,8 +134,8 @@ while True:
     player_a["matches"] += 1
     player_b["matches"] += 1
 
-    print(player_a["name"] + " elo: " + str(round(player_a["rating"], 2)))
-    print(player_b["name"] + " elo: " + str(round(player_b["rating"], 2)))
+    #print(player_a["name"] + " elo: " + str(round(player_a["rating"], 2)))
+    #print(player_b["name"] + " elo: " + str(round(player_b["rating"], 2)))
 
 with open(jsonFile, 'w') as file:
     json.dump(elo_list, file, indent=2)

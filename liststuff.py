@@ -2,7 +2,7 @@ import json
 
 elo_list = []
 
-names = ["big arms", "corvette buyer", "mr creatine", "mr anime"]
+names = ["test"]
 
 for name in names:
     data = {"name": name, "rating": 1500, "matches": 0}
